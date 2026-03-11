@@ -14,7 +14,7 @@ npm install
 
 ### Firebase env vars
 
-Create a `.env` file in the project root (same folder as `package.json`):
+Create a `.env` file in the project root (same folder as `package.json`). You can copy from `env.example`:
 
 ```bash
 VITE_FIREBASE_API_KEY=...
@@ -24,6 +24,7 @@ VITE_FIREBASE_PROJECT_ID=...
 VITE_FIREBASE_STORAGE_BUCKET=...
 VITE_FIREBASE_MESSAGING_SENDER_ID=...
 VITE_FIREBASE_APP_ID=...
+VITE_FIREBASE_MEASUREMENT_ID=... # optional
 ```
 
 ### Run

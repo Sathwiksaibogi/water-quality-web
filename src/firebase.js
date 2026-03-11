@@ -4,17 +4,28 @@ import { getDatabase } from 'firebase/database'
 // Vite exposes env vars via import.meta.env
 // Provide these in a `.env` file (see `.env.example`).
 const firebaseConfig = {
-  apiKey: "AIzaSyBWL2mm7CwncJSpsTQDipBlSyQYxAhf7Sg",
-  authDomain: "smart-water-bottle-fb3b7.firebaseapp.com",
-  projectId: "smart-water-bottle-fb3b7",
-  storageBucket: "smart-water-bottle-fb3b7.firebasestorage.app",
-  messagingSenderId: "826867907527",
-  appId: "1:826867907527:web:095c532479796990eeb7e2",
-  measurementId: "G-ZN0P2WWZ3K"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  databaseURL: import.meta.env.VITE_FIREBASE_DATABASE_URL,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
+  measurementId: import.meta.env.VITE_FIREBASE_MEASUREMENT_ID,
 }
 
 function hasAllFirebaseConfig(cfg) {
-  return Object.values(cfg).every(Boolean)
+  // measurementId is optional; allow missing.
+  const requiredKeys = [
+    'apiKey',
+    'authDomain',
+    'databaseURL',
+    'projectId',
+    'storageBucket',
+    'messagingSenderId',
+    'appId',
+  ]
+  return requiredKeys.every((k) => Boolean(cfg[k]))
 }
 
 export const firebaseApp = hasAllFirebaseConfig(firebaseConfig)
