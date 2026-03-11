@@ -2,6 +2,8 @@
 
 High-end, responsive dashboard for monitoring `bottle_01/sensors` from **Firebase Realtime Database**.
 
+This project is synced with the GitHub repo [`Sathwiksaibogi/water-quality-web`](https://github.com/Sathwiksaibogi/water-quality-web).
+
 ## Setup
 
 ### Install
@@ -12,7 +14,7 @@ npm install
 
 ### Firebase env vars
 
-Create a `.env` file in `water-quality-web/` (same folder as `package.json`):
+Create a `.env` file in the project root (same folder as `package.json`):
 
 ```bash
 VITE_FIREBASE_API_KEY=...
