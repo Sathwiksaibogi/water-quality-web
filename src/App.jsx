@@ -1,7 +1,8 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { motion } from 'framer-motion'
 import { onValue, ref } from 'firebase/database'
 import { Navbar } from './components/Navbar.jsx'
+import { AnalyticsChart } from './components/AnalyticsChart.jsx'
 import { SensorCard } from './components/SensorCard.jsx'
 import { StatusBanner } from './components/StatusBanner.jsx'
 import { db } from './firebase.js'
@@ -25,6 +26,14 @@ export default function App() {
   const [isLive, setIsLive] = useState(false)
   const [isLoading, setIsLoading] = useState(true)
 
+  const [phHistory, setPhHistory] = useState([])
+  const [tempHistory, setTempHistory] = useState([])
+  const [tdsHistory, setTdsHistory] = useState([])
+
+  const phLastValue = useRef(null)
+  const tempLastValue = useRef(null)
+  const tdsLastValue = useRef(null)
+
   useEffect(() => {
     if (!db) return
 
@@ -36,10 +45,55 @@ export default function App() {
         const v = snapshot.val() || {}
 
         // Map keys from Firebase: temperature, tds, ph, safe
-        setTemperature(toNumberOrNull(v.temperature))
-        setTds(toNumberOrNull(v.tds))
-        setPh(toNumberOrNull(v.ph))
-        setSafe(toBooleanOrNull(v.safe))
+        const nextTemp = toNumberOrNull(v.temperature)
+        const nextTds = toNumberOrNull(v.tds)
+        const nextPh = toNumberOrNull(v.ph)
+        const nextSafe = toBooleanOrNull(v.safe)
+
+        setTemperature(nextTemp)
+        setTds(nextTds)
+        setPh(nextPh)
+        setSafe(nextSafe)
+
+        // Append realtime history points (keep last 20 to avoid lag)
+        if (nextPh !== null && nextPh !== phLastValue.current) {
+          const point = {
+            t: new Date().toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            }),
+            value: nextPh,
+          }
+          setPhHistory((prev) => [...prev, point].slice(-20))
+          phLastValue.current = nextPh
+        }
+
+        if (nextTemp !== null && nextTemp !== tempLastValue.current) {
+          const point = {
+            t: new Date().toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            }),
+            value: nextTemp,
+          }
+          setTempHistory((prev) => [...prev, point].slice(-20))
+          tempLastValue.current = nextTemp
+        }
+
+        if (nextTds !== null && nextTds !== tdsLastValue.current) {
+          const point = {
+            t: new Date().toLocaleTimeString([], {
+              hour: '2-digit',
+              minute: '2-digit',
+              second: '2-digit',
+            }),
+            value: nextTds,
+          }
+          setTdsHistory((prev) => [...prev, point].slice(-20))
+          tdsLastValue.current = nextTds
+        }
 
         setIsLive(true)
         setIsLoading(false)
@@ -95,6 +149,30 @@ export default function App() {
               <SensorCard kind="ph" label="pH Level" value={ph} unit="" precision={2} />
               <SensorCard kind="temp" label="Temperature" value={temperature} unit="°C" precision={1} />
               <SensorCard kind="tds" label="TDS" value={tds} unit="ppm" precision={0} />
+            </div>
+
+            <div className="grid grid-cols-1 gap-4">
+              <AnalyticsChart
+                title="pH Trend"
+                data={phHistory}
+                dataKey="value"
+                color="#22d3ee"
+                unit=""
+              />
+              <AnalyticsChart
+                title="Temperature Trend"
+                data={tempHistory}
+                dataKey="value"
+                color="#fbbf24"
+                unit="°C"
+              />
+              <AnalyticsChart
+                title="TDS Trend"
+                data={tdsHistory}
+                dataKey="value"
+                color="#a78bfa"
+                unit="ppm"
+              />
             </div>
           </motion.div>
         )}
