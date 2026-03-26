@@ -12,7 +12,6 @@ export function Navbar({ isLive }) {
             <div className="text-sm font-semibold tracking-wide text-slate-100">
               Smart Water Bottle
             </div>
-            <div className="text-xs text-slate-400">Realtime sensor dashboard</div>
           </div>
         </div>
 
@@ -28,10 +27,10 @@ export function Navbar({ isLive }) {
             <span
               className={[
                 'size-2 rounded-full',
-                isLive ? 'bg-emerald-400' : 'bg-slate-400',
+                isLive ? 'bg-emerald-400 animate-pulse' : 'bg-slate-400',
               ].join(' ')}
             />
-            {isLive ? 'LIVE' : 'DEMO'}
+            Live
           </span>
         </div>
       </div>
